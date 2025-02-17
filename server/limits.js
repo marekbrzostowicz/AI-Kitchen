@@ -1,4 +1,4 @@
-const db = require("./database");
+const db = require("./config/db");
 
 const checkDailyLimit = async (userId, operationType, maxLimit) => {
   const [rows] = await db.promise().execute(

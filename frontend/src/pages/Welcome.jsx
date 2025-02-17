@@ -84,7 +84,7 @@ const Welcome = () => {
       console.log("Skladniki:", ingredients);
       setSavedIngredients(ingredients.filter((item) => item.trim() !== ""));
 
-      const response = await fetch("http://localhost:8000/generate", {
+      const response = await fetch("http://localhost:8000/recipes/generate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

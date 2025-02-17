@@ -100,44 +100,25 @@ const RecipeCard = ({
   };
 
   //ZAPIS DO BAZY DANYCH ========================================
-const handleSaveToDatabase = async (localPath) => {
-  try {
-    const userId = localStorage.getItem("userId");
-    if (!userId) {
-      toast.error("User not logged in.");
-      return;
+  const handleSaveToDatabase = async (localPath) => {
+    try {
+      const recipeData = {
+        title: recipeTitle || title,
+        ingredients,
+        instructions,
+        cuisineFlag,
+        totalCalories,
+        imageUrl: localPath || imageUrl,
+        rating: selectedStars,
+        userId: localStorage.getItem("userId"),
+      };
+
+      await recipeApi.saveRecipe(recipeData);
+    } catch (error) {
+      // toast.error(error.message);
+      console.error("Błąd:", error);
     }
-
-    // Sprawdź liczbę zapisanych przepisów
-    const response = await recipeApi.getUserRecipes(userId);
-    if (!response.ok) throw new Error("Failed to fetch recipes");
-
-    const userRecipes = await response.json();
-    if (userRecipes.length >= 50) {
-      toast.error("You have reached the limit of 50 saved recipes.");
-      return;
-    }
-
-    // Jeśli limit nie został przekroczony, zapisz przepis
-    const recipeData = {
-      title: recipeTitle || title,
-      ingredients,
-      instructions,
-      cuisineFlag,
-      totalCalories,
-      imageUrl: localPath || imageUrl,
-      rating: selectedStars,
-      userId,
-    };
-
-    await recipeApi.saveRecipe(recipeData);
-    toast.success("Recipe Saved!");
-  } catch (error) {
-    toast.error("Error saving recipe.");
-    console.error("Error:", error);
-  }
-};
-
+  };
 
   // Obsługa kliknięcia poza inputem - zamyka modal
   useEffect(() => {
