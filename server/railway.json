@@ -1,0 +1,8 @@
+{
+  "build": {
+    "root": "server"
+  },
+  "deploy": {
+    "startCommand": "node index.js"
+  }
+}
