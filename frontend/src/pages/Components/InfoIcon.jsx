@@ -3,10 +3,10 @@ import { HiInformationCircle } from "react-icons/hi";
 
 function InfoIcon() {
   const [showTooltip, setShowTooltip] = useState(false);
-  const [tooltipSide, setTooltipSide] = useState("right"); // 'right' by default
+  const [tooltipSide, setTooltipSide] = useState("right");
 
   const handleMouseEnter = () => {
-    // If window width < 600, switch to left
+
     if (window.innerWidth < 800) {
       setTooltipSide("left");
     } else {
@@ -17,7 +17,7 @@ function InfoIcon() {
 
   return (
     <div className="relative flex items-center">
-      {/* Icon */}
+
       <HiInformationCircle
         size={25}
         className="hover:cursor-pointer"
@@ -25,7 +25,7 @@ function InfoIcon() {
         onMouseLeave={() => setShowTooltip(false)}
       />
 
-      {/* Tooltip */}
+
       {showTooltip && (
         <div
           className={`absolute top-1 bg-gray-600 text-white text-sm p-2 rounded-lg shadow-lg w-[250px] z-[50] 

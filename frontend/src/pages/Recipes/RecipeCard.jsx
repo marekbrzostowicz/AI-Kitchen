@@ -1,21 +1,16 @@
 import { useEffect, useRef, useState } from "react";
 import Flag from "react-world-flags";
 import ImageLoading from "../Loading/imageLoading.jsx";
-import {
-  FaImage,
-  FaSave,
-  FaCheckCircle,
-  FaStar,
-  FaTrashAlt,
-} from "react-icons/fa";
+import { FaImage, FaSave, FaCheckCircle, FaStar } from "react-icons/fa";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
 import LoadingDot from "../Loading/LoadingDot.jsx";
 import ServingsSelector from "../Components/ServingSelector.jsx";
 import InfoIcon from "../Components/InfoIcon.jsx";
 import { recipeApi } from "../../Api/recipe/recipeApi.js";
 import TimerToast from "../Components/TimerToast.jsx";
+
+const API_URL = `${import.meta.env.VITE_API_URL}/api`;
 
 const RecipeCard = ({
   title,
@@ -23,18 +18,13 @@ const RecipeCard = ({
   ingredientsPortions,
   instructions,
   cuisineFlag,
-  imageUrl,
-  isImageLoading,
   onGenerateImage,
   totalCalories,
-
   setRecipeTitle,
   recipeTitle,
-
   onSave,
   modalOpen,
   setModalOpen,
-
   onSaveFav,
   modalOpenFav,
   setModalOpenFav,
@@ -52,17 +42,20 @@ const RecipeCard = ({
   const [showGenrateImageButton, setShowGenerateImageButton] = useState(true);
   const [showDescription, setShowDescription] = useState(false);
   const [description, setDescription] = useState("");
-  const [loading, setLoading] = useState(false); // Stan ładowania
+  const [descriptionLoading, setDescriptionLoading] = useState(false);
   const [servings, setServings] = useState(1);
   const [scaledPortions, setScaledPortions] = useState([]);
+  const [isSave, setIsSave] = useState(false);
+  const [imageUrl, setImageUrl] = useState(null);
+  const [isImageLoading, setIsImageLoading] = useState(false);
 
   const processIngredient = (ingredient) => {
-    const cleaned = ingredient.replace(/^\d+\.\s*/, ""); // Usuń numerację
+    const cleaned = ingredient.replace(/^\d+\.\s*/, "");
     const parts = cleaned.split(" ");
     if (parts.length < 2) return { name: cleaned, portion: "" };
 
-    const portion = parts.slice(-2).join(" "); // Ostatnie 2 wyrazy to porcja
-    const name = parts.slice(0, -2).join(" "); // Reszta to nazwa składnika
+    const portion = parts.slice(-2).join(" ");
+    const name = parts.slice(0, -2).join(" ");
     return { name, portion };
   };
 
@@ -71,15 +64,14 @@ const RecipeCard = ({
     const tomorrow = new Date();
     tomorrow.setDate(now.getDate() + 1);
     tomorrow.setHours(0, 0, 0, 0);
-    return tomorrow - now; // w milisekundach
+    return tomorrow - now;
   }
 
   const timeUntilReset = getTimeUntilReset();
 
-  //GENEROWANIE OPISU DO SKŁADNIKÓW ========================================
   const handleGnerateIngredients = async ({ param }) => {
     try {
-      setLoading(true);
+      setDescriptionLoading(true);
       setShowDescription(false);
       const data = await recipeApi.generateIngredientDescription(param);
       const [name, details] = data.description.split(" - ");
@@ -95,12 +87,58 @@ const RecipeCard = ({
         console.error("Error:", err);
       }
     } finally {
-      setLoading(false);
+      setDescriptionLoading(false);
     }
   };
 
-  //ZAPIS DO BAZY DANYCH ========================================
-  const handleSaveToDatabase = async (localPath) => {
+  const handleGenerateImage = async () => {
+    try {
+      setIsImageLoading(true);
+      setImageUrl(null);
+      const generatedImageUrl = await onGenerateImage();
+      console.log("Generated image URL in RecipeCard:", generatedImageUrl);
+      setImageUrl(generatedImageUrl);
+    } catch (error) {
+      if (error.message === "Limit przekroczony") {
+        toast.info(<TimerToast initialTime={timeUntilReset} type="image" />, {
+          toastId: "image-limit",
+        });
+      } else {
+        toast.error("Failed to generate image");
+        console.error("Error generating image:", error);
+      }
+    } finally {
+      setIsImageLoading(false);
+    }
+  };
+
+  const storeImageLocally = async () => {
+    try {
+      if (!imageUrl) return null;
+
+      if (imageUrl.includes("sirv.com")) {
+        return imageUrl;
+      }
+
+      const response = await fetch(`${API_URL}/upload-image`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ imageUrl }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to upload image to Sirv");
+      }
+
+      const data = await response.json();
+      return data.imageUrl;
+    } catch (error) {
+      console.error("Error storing image:", error);
+      return null;
+    }
+  };
+
+  const handleSaveToDatabase = async (imgUrl) => {
     try {
       const recipeData = {
         title: recipeTitle || title,
@@ -108,19 +146,39 @@ const RecipeCard = ({
         instructions,
         cuisineFlag,
         totalCalories,
-        imageUrl: localPath || imageUrl,
+        imageUrl: imgUrl,
         rating: selectedStars,
         userId: localStorage.getItem("userId"),
       };
 
       await recipeApi.saveRecipe(recipeData);
+      toast.success("Recipe Saved");
+      toast.error("Save failed");
     } catch (error) {
-      // toast.error(error.message);
-      console.error("Błąd:", error);
+      console.error(error);
     }
   };
 
-  // Obsługa kliknięcia poza inputem - zamyka modal
+  const handleSaveClick = async (e) => {
+    e.stopPropagation();
+    setIsSave(true);
+    setModalOpen(true);
+
+    setShowSaveButton(false);
+    setShowRateButton(false);
+    setShowGenerateImageButton(false);
+
+    try {
+      const sirvUrl = await storeImageLocally();
+      await handleSaveToDatabase(sirvUrl || null);
+    } catch (error) {
+      console.error("Error saving recipe:", error);
+    } finally {
+      setIsSave(false);
+      setModalOpen(false);
+    }
+  };
+
   useEffect(() => {
     function handleClickOutside(event) {
       if (
@@ -141,7 +199,6 @@ const RecipeCard = ({
     };
   }, [modalOpen]);
 
-  // Obsługa zamykania modala "Add to Favorites"
   useEffect(() => {
     function handleClickOutsideFav(event) {
       if (
@@ -199,7 +256,6 @@ const RecipeCard = ({
       const unit = words.slice(1).join(" ");
       const newAmount = (amount * servings).toFixed(0);
 
-      // Zwróć nowy obiekt z zaktualizowaną porcją
       return {
         ...item,
         portion: `${newAmount} ${unit}`,
@@ -213,21 +269,9 @@ const RecipeCard = ({
     }
   }, [servings, ingredientsPortions]);
 
-  const storeImageLocally = async () => {
-    try {
-      if (!imageUrl) return null;
-      return await recipeApi.storeImage(imageUrl);
-    } catch (error) {
-      toast.error(error.message);
-      console.error("Error storing image", error);
-      return null;
-    }
-  };
-
   return (
     <>
       <div className="flex flex-col lg:flex-row justify-evenly gap-8">
-        {/* Panel składników */}
         <div className="flex flex-col w-full max-w-[450px] justify-center gap-2 border-[3px] rounded-xl border-yellow-500 p-4 bg-gray-800 relative">
           <div className="absolute top-4 left-4">
             <ServingsSelector servings={servings} setServings={setServings} />
@@ -270,7 +314,7 @@ const RecipeCard = ({
               </div>
             );
           })}
-          {loading ? (
+          {descriptionLoading ? (
             <div className="flex justify-center items-center mt-4">
               <LoadingDot />
             </div>
@@ -278,8 +322,7 @@ const RecipeCard = ({
             showDescription &&
             description && (
               <div className="p-4 bg-white text-black rounded-lg border-[3px] border-gray-400 mt-4">
-                {/* Wyświetl nazwę i szczegóły */}
-                <p className="text-2xl font-bold border-b-[3px]  border-gray-400">
+                <p className="text-2xl font-bold border-b-[3px] border-gray-400">
                   {description.name}
                 </p>
                 <p className="text-medium mt-2 text-gray-800">
@@ -305,12 +348,10 @@ const RecipeCard = ({
           )}
         </div>
 
-        {/* Panel przepisu */}
-
-        <div className="relative p-6 pb-14 bg-yellow-100 text-black max-w-3xl flex flex-col items-start text-left border-[4px] rounded-xl border-yellow-500">
+        <div className="relative p-6 pb-14 bg-yellow-100 text-black max-w-3xl flex flex-col items-start text-left border-[3px] rounded-xl border-yellow-500">
           <div className="flex justify-between items-start w-full">
             <div className="flex-1 min-w-0">
-              <p className="font-bold text-2xl border-b-2 border-yellow-600 p-[5px] break-words mb-16">
+              <p className="font-bold text-2xl border-b-2 border-yellow-600 p-[5px] break-words mb-16 flex items-center gap-2">
                 {title}
                 {cuisineFlag && (
                   <Flag
@@ -335,7 +376,7 @@ const RecipeCard = ({
                 ) : (
                   showGenrateImageButton && (
                     <button
-                      onClick={onGenerateImage}
+                      onClick={handleGenerateImage}
                       className="px-4 py-2 bg-yellow-400 text-black rounded-xl hover:bg-yellow-300 font-medium flex gap-[8px]"
                     >
                       Image
@@ -349,7 +390,7 @@ const RecipeCard = ({
 
           {instructions &&
             instructions.split("\n").map((step, index) => {
-              if (index >= 8) return null; // Nie wyświetlaj, jeśli index >= 9
+              if (index >= 9) return null;
               return (
                 <p key={index} className="mb-2 font-medium text-[17px]">
                   <span className="font-black text-xl">{index + 1}.</span>{" "}
@@ -358,8 +399,6 @@ const RecipeCard = ({
                 </p>
               );
             })}
-
-          {/* Przycisk zapisu przepisu */}
 
           {showSaveButton && (
             <div
@@ -384,38 +423,17 @@ const RecipeCard = ({
                     autoFocus
                     className="w-[300px] bg-transparent border-b-[3px] border-yellow-600 focus:outline-none text-xm font-medium"
                   />
-
                   <FaCheckCircle
                     ref={saveIconRef}
                     size={30}
                     className="text-yellow-500 transition duration-200 hover:text-yellow-800 hover:cursor-pointer"
-                    onClick={async (e) => {
-                      e.stopPropagation();
-
-                      // Blokuj zamknięcie modala
-                      setModalOpen(true); // Resetujemy timer
-
-                      try {
-                        const localPath = await storeImageLocally();
-                        await handleSaveToDatabase(localPath);
-
-                        toast.success("Recipe Saved");
-                        setShowSaveButton(false);
-                        setShowRateButton(false);
-                        setShowGenerateImageButton(false);
-                      } catch (error) {
-                        toast.error("Save failed");
-                      } finally {
-                        setModalOpen(false); // Ręczne zamknięcie po operacji
-                      }
-                    }}
+                    onClick={handleSaveClick}
                   />
                 </div>
               )}
             </div>
           )}
 
-          {/* Przycisk dodania do ulubionych */}
           <div className="absolute bottom-4 left-4 flex gap-2 items-center">
             {showRateButton && (
               <button
@@ -448,7 +466,6 @@ const RecipeCard = ({
             )}
           </div>
         </div>
-        {/* <ToastContainer position="top-right" autoClose={2000} /> */}
       </div>
     </>
   );

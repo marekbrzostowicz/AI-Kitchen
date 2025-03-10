@@ -6,15 +6,12 @@ import { FaSortAlphaDown, FaStar, FaTrash } from "react-icons/fa";
 import { deleteRecipe } from "../../Api/recipe/deleteRecipe";
 import Input from "../Components/Input";
 
-// Funkcja do ucieczki znaków w RegEx (dla highlight):
 function escapeRegExp(string) {
   return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
-// Funkcja do wyróżniania pasującego fragmentu w tekście (podkreślenie, kolor czerwony)
 function highlightMatches(text, query) {
   if (!query) return text;
-  // Dzielimy zapytanie na słowa (ignorujemy puste fragmenty) i łączymy je wzorem, który pozwala na dowolne spacje pomiędzy
   const safeQuery = query
     .split(/\s+/)
     .filter(Boolean)
@@ -22,7 +19,6 @@ function highlightMatches(text, query) {
     .join("\\s*");
   const regex = new RegExp(`(${safeQuery})`, "gi");
   return text.replace(regex, (match) => {
-    // Podziel match na części – zachowując spacje – i podświetl tylko te, które nie są spacjami
     return match
       .split(/(\s+)/)
       .map((part) => {
@@ -40,25 +36,19 @@ const RecipeList = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  // Kontrola, czy pokazywać listę przepisów i listę "starred"
   const [showRecipes, setShowRecipes] = useState(false);
   const [showStarredRecipes, setShowStarredRecipes] = useState(false);
 
-  // Mechanizm chowający/pokazujący navbar na scroll:
   const [isVisible, setIsVisible] = useState(true);
   const lastScrollY = useRef(0);
 
-  // Usuwanie przepisu:
   const [recipeToDelete, setRecipeToDelete] = useState(null);
 
-  // Pola wyszukiwania
   const [searchTitle, setSearchTitle] = useState("");
   const [searchIngredients, setSearchIngredients] = useState("");
 
-  // Przepis wybrany do powiększonego widoku (modal)
   const [selectedRecipe, setSelectedRecipe] = useState(null);
 
-  // 1. Pobieranie przepisów
   const fetchRecipes = async () => {
     setLoading(true);
     try {
@@ -67,7 +57,7 @@ const RecipeList = () => {
         throw new Error("Brak userId w localStorage");
       }
       const response = await fetch(
-        `http://localhost:8000/api/recipes?userId=${userId}`
+        `${import.meta.env.VITE_API_URL}/api/recipes?userId=${userId}`
       );
       if (!response.ok) {
         throw new Error("Błąd pobierania przepisów");
@@ -81,7 +71,6 @@ const RecipeList = () => {
     }
   };
 
-  // 2. Funkcje do przełączania list
   const toggleAllRecipes = () => {
     if (!showRecipes) {
       if (recipes.length === 0) {
@@ -102,7 +91,6 @@ const RecipeList = () => {
     setShowRecipes(false);
   };
 
-  // 3. Funkcje do usuwania przepisu
   const confirmDelete = (recipeId) => {
     setRecipeToDelete(recipeId);
   };
@@ -120,14 +108,11 @@ const RecipeList = () => {
     }
   };
 
-  // 4. Mechanizm chowający navbar
   const handleScroll = () => {
     const currentScrollY = window.scrollY;
     if (currentScrollY > lastScrollY.current) {
-      // Scroll w dół -> chowamy navbar
       setIsVisible(false);
     } else {
-      // Scroll w górę -> pokazujemy navbar
       setIsVisible(true);
     }
     lastScrollY.current = currentScrollY;
@@ -138,13 +123,11 @@ const RecipeList = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // 5. Ładujemy przepisy przy starcie
   useEffect(() => {
     setShowRecipes(true);
     fetchRecipes();
   }, []);
 
-  // 6. Zamykanie powiększonego widoku klawiszem Escape
   useEffect(() => {
     const handleEscape = (e) => {
       if (e.key === "Escape") {
@@ -155,35 +138,29 @@ const RecipeList = () => {
     return () => window.removeEventListener("keydown", handleEscape);
   }, []);
 
-  // 7. Renderowanie gwiazdek ratingu
   const renderStars = (rating) => {
     return Array.from({ length: rating }, (_, i) => (
       <FaStar size={20} key={i} className="mr-1" />
     ));
   };
 
-  // 8. Filtrowanie przepisów
   let displayedRecipes = [];
   if (showStarredRecipes) {
-    // Tylko te z rating > 0
     displayedRecipes = recipes
       .filter((recipe) => recipe.rating > 0)
       .sort((a, b) => b.rating - a.rating);
   } else if (showRecipes) {
-    // Wszystkie w kolejności alfabetycznej
     displayedRecipes = [...recipes].sort((a, b) =>
       a.title.localeCompare(b.title)
     );
   }
 
-  // Filtrowanie po tytule
   if (searchTitle.trim() !== "") {
     displayedRecipes = displayedRecipes.filter((recipe) =>
       recipe.title.toLowerCase().includes(searchTitle.toLowerCase())
     );
   }
 
-  // Filtrowanie po składnikach
   if (searchIngredients.trim() !== "") {
     displayedRecipes = displayedRecipes.filter((recipe) =>
       recipe.ingredients.toLowerCase().includes(searchIngredients.toLowerCase())
@@ -192,14 +169,12 @@ const RecipeList = () => {
 
   return (
     <>
-      {/* NAVBAR */}
       <nav
         className={`bg-gray-700 bg-opacity-70 fixed top-0 left-0 w-full font-mono text-xl z-10 text-yellow-200 font-bold pt-2 transition-transform duration-300 ${
           isVisible ? "translate-y-0" : "-translate-y-full"
         }`}
       >
         <div className="container mx-auto flex justify-between items-center pr-16 pl-16 py-2">
-          {/* Logo */}
           <Link to="/welcome">
             <img
               src={logo}
@@ -208,9 +183,7 @@ const RecipeList = () => {
             />
           </Link>
 
-          {/* Linki */}
           <div className="flex gap-32">
-            {/* GENERATE */}
             <Link
               to="/welcome"
               className="relative group py-2 inline-block cursor-pointer 
@@ -224,7 +197,6 @@ const RecipeList = () => {
               />
             </Link>
 
-            {/* STARRED */}
             <button
               className="relative group py-2 flex items-center gap-2 cursor-pointer 
                  hover:text-yellow-500 transition-colors duration-300"
@@ -238,7 +210,6 @@ const RecipeList = () => {
               />
             </button>
 
-            {/* ALL RECIPES */}
             <button
               className="relative group py-2 flex items-center gap-2 cursor-pointer 
                  hover:text-yellow-500 transition-colors duration-300"
@@ -255,7 +226,6 @@ const RecipeList = () => {
         </div>
       </nav>
 
-      {/* SIDEBAR - stały, dynamicznie przesuwany w pionie w zależności od isVisible */}
       <div
         className={`bg-gray-700 flex flex-col bg-opacity-40 fixed left-0 w-[300px] h-full z-50 p-6 transition-all duration-300 ${
           isVisible ? "top-[124px]" : "top-0"
@@ -288,31 +258,28 @@ const RecipeList = () => {
         />
       </div>
 
-      {/* GŁÓWNA ZAWARTOŚĆ – flex wrap i offset left ~340px */}
       <div className="pl-[340px] pt-4 pr-4 pb-4">
-        {loading && <div className="text-white">Loading recipes...</div>}
+        {loading && (
+          <div className="text-white mt-[500px] mr-[500px]">
+            Loading recipes...
+          </div>
+        )}
         {displayedRecipes.length === 0 && !loading && !error ? (
           <p className="text-white text-lg mt-[170px]">No recipe found.</p>
         ) : (
-          <div
-            className="mt-[170px] flex flex-wrap gap-8 justify-evenly"
-            // UWAGA: top offset = 170px, by recipes były poniżej nav i sidebar
-          >
+          <div className="mt-[170px] flex flex-wrap gap-8 justify-evenly">
             {displayedRecipes.map((recipe, index) => {
-              // Wyróżnianie tytułu
               const highlightedTitle = highlightMatches(
                 recipe.title,
                 searchTitle
               );
 
-              // Wyróżnianie składników w modalu i tutaj jest odrębnie – tu wystarczy normalne wyświetlanie,
-              // bo highlight zrobimy w dangerouslySetInnerHTML:
               return (
                 <div
                   key={index}
                   className="relative flex flex-col bg-yellow-100 border-4 border-yellow-500 rounded-xl group transition-transform duration-300 hover:scale-[1.03] p-4"
                   style={{ width: "520px", marginBottom: "20px" }}
-                  onClick={() => setSelectedRecipe(recipe)} // Otwieramy modal
+                  onClick={() => setSelectedRecipe(recipe)}
                 >
                   <div className="mb-4">
                     <div className="font-black text-xl border-b-[3px] border-yellow-600 p-2 flex items-center justify-between">
@@ -329,7 +296,6 @@ const RecipeList = () => {
                         </div>
                       )}
                     </div>
-                    {/* Gwiazdki ratingu */}
                     {recipe.rating > 0 && (
                       <div className="flex text-orange-500 p-2">
                         {renderStars(recipe.rating)}
@@ -337,7 +303,6 @@ const RecipeList = () => {
                     )}
                   </div>
 
-                  {/* Sekcja Ingredients */}
                   <div className="flex justify-between mb-4">
                     <div>
                       <p className="font-black text-lg border-b-[3px] border-yellow-600 mb-2">
@@ -347,7 +312,6 @@ const RecipeList = () => {
                         .slice(1, -1)
                         .split(",")
                         .map((ingredient, idx) => {
-                          // wyróżnienie składnika
                           const highlightedIng = highlightMatches(
                             ingredient.slice(3, -1),
                             searchIngredients
@@ -366,7 +330,6 @@ const RecipeList = () => {
                           );
                         })}
                     </div>
-                    {/* Kcal + obrazek */}
                     <div>
                       {recipe.totalCalories !== null &&
                         recipe.totalCalories > 0 && (
@@ -392,7 +355,6 @@ const RecipeList = () => {
                     </div>
                   </div>
 
-                  {/* Instructions */}
                   <p className="font-black text-lg border-b-[3px] border-yellow-600 mb-2">
                     Instructions:
                   </p>
@@ -406,7 +368,6 @@ const RecipeList = () => {
                       </p>
                     ))}
 
-                  {/* Ikona usuwania (FaTrash) */}
                   <FaTrash
                     size={20}
                     onClick={(e) => {
@@ -422,11 +383,12 @@ const RecipeList = () => {
         )}
         <div>
           {" "}
-          <p className=" absolute top-36 right-4 text-orange-400 text-[14px]">Total: {recipes.length}</p>
+          <p className=" absolute top-36 right-4 text-orange-400 text-[14px]">
+            Total: {recipes.length}
+          </p>
         </div>
       </div>
 
-      {/* Modal potwierdzenia usuwania */}
       {recipeToDelete && (
         <div
           className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-50 z-50"
@@ -457,7 +419,6 @@ const RecipeList = () => {
         </div>
       )}
 
-      {/* Modal z większym widokiem przepisu (selectedRecipe) */}
       {selectedRecipe && (
         <div
           className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-50 z-50"
@@ -467,7 +428,6 @@ const RecipeList = () => {
             className="bg-white w-[600px] max-h-[80vh] overflow-auto p-6 rounded-lg shadow-lg relative"
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Przycisk zamykający */}
             <button
               className="absolute top-2 right-2 text-xl font-bold text-gray-600 hover:text-gray-900"
               onClick={() => setSelectedRecipe(null)}
@@ -475,7 +435,6 @@ const RecipeList = () => {
               X
             </button>
 
-            {/* Szczegóły wybranego przepisu */}
             <h2
               className="font-black text-2xl mb-4 border-b-2 pb-2"
               dangerouslySetInnerHTML={{
@@ -488,8 +447,6 @@ const RecipeList = () => {
               </div>
             )}
 
-            {/* Ingredients i obrazek */}
-            {/* Ingredients i obrazek w modal */}
             <div className="flex justify-between mb-4">
               <div>
                 <p className="font-black text-xl mb-2">Ingredients:</p>
@@ -516,7 +473,6 @@ const RecipeList = () => {
                   })}
               </div>
               <div>
-                {/* Renderowanie informacji o kaloriach tylko gdy wartość jest dostępna i większa od 0 */}
                 {selectedRecipe.totalCalories !== null &&
                   selectedRecipe.totalCalories > 0 && (
                     <p className="font-medium text-sm">
@@ -524,7 +480,6 @@ const RecipeList = () => {
                       {selectedRecipe.totalCalories} kcal
                     </p>
                   )}
-                {/* Obrazek, renderowany niezależnie od kaloryczności */}
                 {selectedRecipe.imageUrl && (
                   <img
                     className="border-[3px] border-yellow-500 rounded-2xl mt-2"
@@ -540,7 +495,6 @@ const RecipeList = () => {
               </div>
             </div>
 
-            {/* Instructions */}
             <p className="font-black text-xl mb-2">Instructions:</p>
             {selectedRecipe.instructions
               .split(/\d+\.\s*/)

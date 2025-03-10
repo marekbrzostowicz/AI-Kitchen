@@ -3,16 +3,15 @@ import Flag from "react-world-flags";
 import PropTypes from "prop-types";
 
 const Language = ({ language, setLanguage }) => {
-  const [isDiv, setDiv] = useState(false); // Stan rozwinięcia dropdowna
-  const dropdownRef = useRef(null); // Referencja do dropdowna
+  const [isDiv, setDiv] = useState(false); 
+  const dropdownRef = useRef(null); 
 
-  // Obsługa kliknięcia w opcję języka
+
   const handleLanguageChange = (code) => {
-    setLanguage(code); // Ustawienie nowej flagi w `Welcome.jsx`
-    setDiv(false); // Zamknięcie dropdowna
+    setLanguage(code); 
+    setDiv(false); 
   };
 
-  // Zamknięcie dropdowna po kliknięciu poza nim
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -26,7 +25,6 @@ const Language = ({ language, setLanguage }) => {
     };
   }, []);
 
-  // Lista języków z różnymi wartościami `margin-right`
   const languages = [
     { code: "pl", name: "Poland", marginRight: "40px" },
     { code: "it", name: "Italty", marginRight: "56px" },
@@ -40,16 +38,14 @@ const Language = ({ language, setLanguage }) => {
 
   return (
     <div className="relative" ref={dropdownRef}>
-      {/* Główny kontener kliknięcia */}
       <div
         className="flex gap-[6px] border-[3px] p-2 border-gray-400 rounded-xl hover:bg-slate-700 cursor-pointer "
-        onClick={() => setDiv((prev) => !prev)} // Kliknięcie otwiera/zamyka dropdown
+        onClick={() => setDiv((prev) => !prev)}
       >
         <p className="font-semibold text-[14px]">Cuisine</p>
         <Flag code={language} className="w-8 h-auto rounded-lg" />
       </div>
 
-      {/* Dodatkowy div - lista wyboru języka */}
       {isDiv && (
         <div className="absolute bottom-[50px] left-[-35px] mt-2 border-[3px] rounded-xl border-gray-400 text-white p-2 flex flex-col bg-gray-800 w-[165px]">
           {languages.map((lang) => (
@@ -69,3 +65,4 @@ const Language = ({ language, setLanguage }) => {
 };
 
 export default Language;
+

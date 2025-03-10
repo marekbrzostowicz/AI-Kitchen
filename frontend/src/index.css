@@ -6,6 +6,6 @@
 
 body {
   @apply font-sans;
-  @apply bg-gray-800; /* Przykład: ciemne tło z białym tekstem */
+  @apply bg-gray-800; 
 }
 

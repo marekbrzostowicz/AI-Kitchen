@@ -12,7 +12,7 @@ const Slider = () => {
     "Ingredient List & Detailed Info on Click",
   ];
 
-  // Każdy slajd ma identyczne klasy centrowania
+
   const slides = [
     <div
       key="inputs"
@@ -43,7 +43,7 @@ const Slider = () => {
 
   return (
     <div className="relative w-full min-h-screen flex flex-col items-center justify-start py-16 md:py-24 px-4 overflow-hidden">
-      {/* Nagłówek */}
+
       <div
         className="z-20 text-center text-green-200 font-bold mb-8 md:mb-12
                    text-xl sm:text-2xl md:text-3xl lg:text-4xl
@@ -52,7 +52,7 @@ const Slider = () => {
         {slideTitles[currentSlide]}
       </div>
 
-      {/* Kontener slidera */}
+
       <div
         className="relative z-10 w-full max-w-[500px] lg:max-w-[800px]
                    min-h-[300px] md:min-h-[400px]
@@ -60,7 +60,7 @@ const Slider = () => {
                    border-[2px] border-green-300 overflow-hidden
                    flex items-center justify-center"
       >
-        {/* Wewnętrzny kontener na slajdy */}
+
         <div
           className="flex transition-transform duration-700 ease-in-out w-full h-full"
           style={{ transform: `translateX(-${currentSlide * 100}%)` }}

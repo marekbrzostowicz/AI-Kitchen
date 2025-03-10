@@ -23,8 +23,6 @@ const Home = () => {
 
   useEffect(() => {
     window.addEventListener("scroll", handleScroll);
-
-    // Cleanup listenera
     return () => {
       window.removeEventListener("scroll", handleScroll);
     };
@@ -34,7 +32,7 @@ const Home = () => {
     const element = document.getElementById(id);
     if (element) {
       window.scrollTo({
-        top: element.offsetTop - 80, // Dostosowanie, żeby nie zasłaniało przez navbar
+        top: element.offsetTop - 80, 
         behavior: "smooth",
       });
     }
@@ -42,15 +40,12 @@ const Home = () => {
 
   return (
     <div className="relative">
-      {/* Navbar */}
       <nav
         className={`bg-gray-600 bg-opacity-70 fixed top-0 left-0 w-full font-mono text-xl z-[100] text-green-200 font-bold pt-2 transition-transform duration-300 ${
           isVisible ? "translate-y-0" : "-translate-y-full"
         }`}
       >
-        {/* Używamy responsywnego paddingu i ustawiamy flex-col na małych ekranach */}
         <div className="container mx-auto flex flex-col md:flex-row justify-between items-center px-4 md:px-16">
-          {/* Logo */}
           <img
             src={logo}
             alt="Logo"
@@ -58,7 +53,6 @@ const Home = () => {
             className="w-[100px] h-auto cursor-pointer mb-2 md:mb-0"
           />
 
-          {/* Kontener linków – ustawiamy flex-col na mobile, flex-row na md+ */}
           <div className="flex flex-col md:flex-row items-center gap-4 md:gap-x-48">
             <div
               onClick={() => scrollToSection("about")}
@@ -81,7 +75,6 @@ const Home = () => {
               ></span>
             </div>
 
-            {/* LOGIN */}
             <Link
               to="/login"
               className="relative group py-2 inline-block cursor-pointer text-green-200 hover:text-green-400 transition-colors duration-300"
@@ -96,7 +89,6 @@ const Home = () => {
         </div>
       </nav>
 
-      {/* Background Image */}
       <div
         className="w-full h-screen bg-cover bg-center"
         style={{
@@ -105,15 +97,12 @@ const Home = () => {
       >
         <div className="absolute top-36 left-8">
           <h3 className="text-5xl md:text-5xl font-bold drop-shadow-lg text-green-100">
-            AI kitchen helper for recipe ideas
+            AI kitchen helper for recipe ideas.
           </h3>
         </div>
       </div>
 
-      {/* Additional Content */}
       <div className="flex p-20 gap-20" id="about">
-        {/* className="border-2 border-green-300 rounded-lg"
-          initial={{ x: -100, opacity: 0 }} */}
 
         <p className="text-white p-5 text-justify border-2 border-green-200 rounded-lg text-xl">
           AI Kitchen Helper is your smart cooking assistant designed to make
@@ -122,10 +111,6 @@ const Home = () => {
           you. Whether you&apos;re looking to reduce food waste, try new dishes,
           or just cook something quick, this app has you covered.
         </p>
-
-        {/* className="border-2 border-green-300  rounded-lg"
-          initial={{ x: 100, opacity: 0 }} */}
-
         <p className="text-white p-5 text-justify border-2 border-green-200 rounded-lg text-xl">
           AI Kitchen Helper is your ultimate cooking companion, packed with
           features to make your culinary journey seamless. Save your favorite
@@ -159,7 +144,6 @@ const Home = () => {
       >
         <div className="text-2xl font-bold text-green-200 mb-4">HOW TO USE</div>
 
-        {/* TUTAJ ZMIANA - zamiast flex-col md:flex-row → flex-row + ewentualnie overflow-x-auto */}
         <div
           className="
       flex flex-row       /* zawsze w wierszu, nawet na małych ekranach */
@@ -171,7 +155,6 @@ const Home = () => {
       overflow-x-auto     /* opcjonalne: poziomy scrollbar na małych ekranach */
     "
         >
-          {/* 1. Kolumna z numerami */}
           <div className="flex flex-col text-green-100">
             <div className="mb-2">1.</div>
             <div className="mb-2">2.</div>
@@ -181,7 +164,6 @@ const Home = () => {
             <div className="mb-2">6.</div>
           </div>
 
-          {/* 2. Kolumna ze strzałkami */}
           <div className="flex flex-col items-center ">
             <div className="mb-5">
               <FaArrowAltCircleRight />
@@ -203,7 +185,6 @@ const Home = () => {
             </div>
           </div>
 
-          {/* 3. Kolumna z opisem kroków */}
           <div className="flex flex-col text-green-300 text-center">
             <div className="mb-2">Log In or Sign Up</div>
             <div className="mb-2">Select Ingredients You Have</div>
@@ -230,8 +211,7 @@ const Home = () => {
 
       <footer className="text-white text-center bg-gray-600 opacity-70 p-6 text-xs">
         <p>
-          &copy; {new Date().getFullYear()} Marek Brzostowicz. All rights
-          reserved.
+          &copy; {new Date().getFullYear()} Marek Brzostowicz. 
         </p>
         <div className="flex justify-center items-center gap-4 mt-2">
           {/* Ikonki technologii */}

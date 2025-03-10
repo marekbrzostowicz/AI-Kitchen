@@ -4,9 +4,8 @@ const path = require("path");
 const { OpenAI } = require("openai");
 const { checkDailyLimit, logUserOperation } = require("../limits");
 
-const router = express.Router(); // Zamiast app tworzysz router
+const router = express.Router();
 
-// Inicjalizacja OpenAI
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
@@ -69,7 +68,8 @@ router.post("/generate", async (req, res) => {
   ### Rules:
   1. Use only the provided ingredients. Do not add new ones.
   2. Stick **strictly** to the ${cuisine} cuisine style.
-  3. If the ingredients do not qualify for ${cuisine} cuisine, return only **Cuisine1: ${cuisine}** and **Cuisine2: ${cuisine}** with no explanation.
+3. If the provided ingredients are not typically used in ${cuisine} cuisine, still generate two creative recipes using only the provided ingredients. However, at the end of each recipe's instructions, include a warning in English such as: "Warning: With the provided ingredients, it is challenging to prepare a traditional ${cuisine} dish." Make sure to include all recipe sections (Title, Ingredients, Instructions, and Cuisine code).
+
   4. If the ingredients cannot make a dish at all, return **"no_recipe"** with no explanation.
   5. If any ingredient is not food, return **"no_recipe"** and list the non-food items starting with "non-food items:".
   
@@ -94,6 +94,7 @@ router.post("/generate", async (req, res) => {
   Cuisine2: [ISO 3166-1 cuisine code]
   
   ### IMPORTANT:
+  Instructions must be long at least 8, 9 detailed steps.
   - If the ingredients **do not qualify** for ${cuisine} cuisine, return **only**:
     - Cuisine1: ${cuisine}
     - Cuisine2: ${cuisine}

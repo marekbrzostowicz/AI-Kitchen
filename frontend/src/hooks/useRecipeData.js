@@ -1,4 +1,3 @@
-// src/hooks/useRecipeData.js
 import { useEffect, useState } from "react";
 
 export function useRecipeData(parsedRecipe) {
@@ -47,7 +46,6 @@ export function useRecipeData(parsedRecipe) {
       return { ingredient, portion };
     });
 
-    // Funkcja pomocnicza do sumowania kalorii
     const sumCalories = (arr) =>
       arr.reduce((sum, item) => {
         const cleaned = item.replace(/^\d+\.\s*/, "");

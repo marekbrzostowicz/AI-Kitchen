@@ -1,4 +1,4 @@
-const API_URL = "http://localhost:8000/api";
+const API_URL = `${import.meta.env.VITE_API_URL}/api`;
 
 export async function generateRecipeImage(recipeTitle, userId) {
   try {
@@ -18,7 +18,7 @@ export async function generateRecipeImage(recipeTitle, userId) {
       throw new Error("Błąd podczas generowania obrazu");
     }
     const data = await response.json();
-    return `http://localhost:8000/${data.localImagePath}`;
+    return data.imageUrl; 
   } catch (error) {
     console.error("Błąd:", error);
     throw error;

@@ -3,7 +3,10 @@ import styled from "styled-components";
 import PropTypes from "prop-types";
 
 const Input = forwardRef(
-  ({ placeholder, value, onChange, onKeyDown, gradientVariant }, ref) => {
+  (
+    { placeholder, value, onChange, onKeyDown, gradientVariant, maxLength },
+    ref
+  ) => {
     return (
       <StyledWrapper gradientVariant={gradientVariant}>
         <div className="form__group field">
@@ -15,6 +18,7 @@ const Input = forwardRef(
             value={value}
             onChange={onChange}
             onKeyDown={onKeyDown}
+            maxLength={maxLength}
           />
         </div>
       </StyledWrapper>
@@ -22,7 +26,6 @@ const Input = forwardRef(
   }
 );
 
-// Add displayName for better debugging
 Input.displayName = "Input";
 
 Input.propTypes = {
@@ -31,10 +34,11 @@ Input.propTypes = {
   onChange: PropTypes.func.isRequired,
   onKeyDown: PropTypes.func,
   gradientVariant: PropTypes.oneOf(["green", "orange"]),
+  maxLength: PropTypes.number,
 };
 
 Input.defaultProps = {
-  gradientVariant: "green", // default to green
+  gradientVariant: "green",
 };
 
 export default Input;

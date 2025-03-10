@@ -8,19 +8,10 @@ import PropTypes from "prop-types";
 import { generateRecipeImage } from "../../Api/recipe/imageApi.js";
 import { parseRecipe } from "../../hooks/useRecipeParser.js";
 import { useRecipeData } from "../../hooks/useRecipeData.js";
-import TimerToast from "../Components/TimerToast.jsx";
+// import TimerToast from "../Components/TimerToast.jsx";
 
 const Recipe = ({ recipe, recipeRef, isLoading }) => {
-  // Stany dla obrazków
-  const [imageUrl1, setImageUrl1] = useState(null);
-  const [isImageLoading1, setIsImageLoading1] = useState(false);
-  const [imageUrl2, setImageUrl2] = useState(null);
-  const [isImageLoading2, setIsImageLoading2] = useState(false);
-
-  // Stan na parsowany przepis
   const [parsedRecipe, setParsedRecipe] = useState(null);
-
-  // Stany modali oraz tytułów do zapisu
   const [ModalOpen1, setModalOpen1] = useState(false);
   const [ModalOpen2, setModalOpen2] = useState(false);
   const [ModalOpenFav1, setModalOpenFav1] = useState(false);
@@ -28,12 +19,7 @@ const Recipe = ({ recipe, recipeRef, isLoading }) => {
   const [recipeTitle1, setRecipeTitle1] = useState("");
   const [recipeTitle2, setRecipeTitle2] = useState("");
 
-  // Resetowanie stanów przy zmianie przepisu
   useEffect(() => {
-    setImageUrl1(null);
-    setIsImageLoading1(false);
-    setImageUrl2(null);
-    setIsImageLoading2(false);
     setModalOpen1(false);
     setModalOpen2(false);
     setModalOpenFav1(false);
@@ -57,7 +43,6 @@ const Recipe = ({ recipe, recipeRef, isLoading }) => {
     setParsedRecipe(parsed);
   }, [recipe]);
 
-  // Użycie hooka useRecipeData do przetwarzania sparsowanych danych
   const {
     arrayOfIngredients1,
     arrayOfPortions1,
@@ -90,7 +75,7 @@ const Recipe = ({ recipe, recipeRef, isLoading }) => {
         className="bg-gray-700 p-8 text-white flex items-center justify-center"
       >
         <div className="p-4 bg-yellow-100 text-black rounded-xl border-4 border-yellow-500 font-semibold max-w-3xl">
-          <p>Sorry, you can&apos;t cook anything with these ingredients.</p>
+          <p>Sorry, you can't cook anything with these ingredients.</p>
         </div>
       </div>
     );
@@ -107,7 +92,7 @@ const Recipe = ({ recipe, recipeRef, isLoading }) => {
         className="bg-gray-700 p-8 text-white flex items-center justify-center"
       >
         <div className="p-4 bg-yellow-100 text-black rounded-xl border-4 border-yellow-500 font-semibold max-w-3xl">
-          <p>Sorry, you can&apos;t cook anything with these ingredients.</p>
+          <p>Sorry, you can't cook anything with these ingredients.</p>
           {nonFoodItems.length > 0 && (
             <div className="mt-4">
               <p className="font-bold text-red-600">Non-food items detected:</p>
@@ -125,57 +110,23 @@ const Recipe = ({ recipe, recipeRef, isLoading }) => {
     );
   }
 
-  function getTimeUntilReset() {
-    const now = new Date();
-    const tomorrow = new Date();
-    tomorrow.setDate(now.getDate() + 1);
-    tomorrow.setHours(0, 0, 0, 0);
-    return tomorrow - now; // w milisekundach
-  }
+  // function getTimeUntilReset() {
+  //   const now = new Date();
+  //   const tomorrow = new Date();
+  //   tomorrow.setDate(now.getDate() + 1);
+  //   tomorrow.setHours(0, 0, 0, 0);
+  //   return tomorrow - now;
+  // }
 
-  const timeUntilReset = getTimeUntilReset();
+  // const timeUntilReset = getTimeUntilReset();
 
-  // Destrukturyzacja sparsowanych danych (pozostałe dane, np. tytuły, treść, kody)
   const { title1, title2, content1, content2, cuisine1Code, cuisine2Code } =
     parsedRecipe;
 
-  // Lokalna funkcja generująca obraz
   const handleGenerateImage = async (whichRecipe) => {
-    try {
-      const recipeTitle = whichRecipe === 1 ? title1 : title2;
-      const userId = localStorage.getItem("userId");
-
-      // Ustaw stan ładowania PRZED rozpoczęciem generowania
-      if (whichRecipe === 1) {
-        setIsImageLoading1(true);
-        setImageUrl1(null); // Resetuj poprzedni obraz
-      } else {
-        setIsImageLoading2(true);
-        setImageUrl2(null);
-      }
-
-      const imageUrl = await generateRecipeImage(recipeTitle, userId);
-
-      if (whichRecipe === 1) {
-        setImageUrl1(imageUrl);
-      } else {
-        setImageUrl2(imageUrl);
-      }
-    } catch (error) {
-      console.error("Błąd:", error);
-      if (error.message === "Limit przekroczony") {
-        toast.info(<TimerToast initialTime={timeUntilReset} type="image" />);
-      } else {
-        alert("Error during image generation.");
-      }
-    } finally {
-      // Zawsze wyłącz ładowanie, niezależnie od wyniku
-      if (whichRecipe === 1) {
-        setIsImageLoading1(false);
-      } else {
-        setIsImageLoading2(false);
-      }
-    }
+    const recipeTitle = whichRecipe === 1 ? title1 : title2;
+    const userId = localStorage.getItem("userId");
+    return generateRecipeImage(recipeTitle, userId); 
   };
 
   return (
@@ -189,9 +140,7 @@ const Recipe = ({ recipe, recipeRef, isLoading }) => {
         ingredientsPortions={arrayOfPortions1}
         instructions={content1}
         cuisineFlag={cuisine1Code}
-        imageUrl={imageUrl1}
-        isImageLoading={isImageLoading1}
-        onGenerateImage={() => handleGenerateImage(1)}
+        onGenerateImage={() => handleGenerateImage(1)} 
         totalCalories={totalCaloriesSum1 > 0 ? totalCaloriesSum1 : null}
         onSave={() => {
           setModalOpen1(true);
@@ -218,9 +167,7 @@ const Recipe = ({ recipe, recipeRef, isLoading }) => {
         ingredientsPortions={arrayOfPortions2}
         instructions={content2}
         cuisineFlag={cuisine2Code}
-        imageUrl={imageUrl2}
-        isImageLoading={isImageLoading2}
-        onGenerateImage={() => handleGenerateImage(2)}
+        onGenerateImage={() => handleGenerateImage(2)} 
         totalCalories={totalCaloriesSum2 > 0 ? totalCaloriesSum2 : null}
         onSave={() => {
           setModalOpen2(true);
@@ -248,7 +195,7 @@ Recipe.propTypes = {
   recipe: PropTypes.string.isRequired,
   recipeRef: PropTypes.object.isRequired,
   isLoading: PropTypes.bool.isRequired,
-  calories: PropTypes.bool.isRequired,
+  calories: PropTypes.bool,
 };
 
 export default Recipe;

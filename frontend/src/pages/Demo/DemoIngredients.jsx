@@ -43,20 +43,16 @@ const DemoIngredients = () => {
       </div>
 
       <div className="p-4 bg-white text-black rounded-lg border-2 border-yellow-500 mt-4">
-        {/* Wyświetl nazwę i emotkę */}
         <p className="text-2xl font-bold border-b-[3px] border-black">
           Salmon Fillet 🐟
         </p>
 
-        {/* Wyświetl szczegóły */}
         <p className="text-md mt-2 text-gray-800">
           A rich source of omega-3 fatty acids and high-quality protein, salmon
           fillet is a heart-healthy choice. Perfect for grilling, baking, or
           pan-searing, it provides essential nutrients like vitamin D and
           selenium, making it a versatile and flavorful option for any meal.
         </p>
-
-        {/* Przycisk zamykający */}
         <button className="mt-4 bg-yellow-400 px-4 py-2 rounded-lg font-medium hover:bg-yellow-300">
           Close
         </button>

@@ -73,7 +73,6 @@ const DemoRecipeCard = () => {
         </p>
       </div>
 
-      {/* Demo Buttons */}
       <div className="absolute bottom-4 right-4 flex gap-2 items-center">
         <button className="bg-yellow-400 font-medium p-2 rounded-xl text-xm flex items-center gap-[5px] hover:bg-yellow-300 cursor-default">
           Save <FaSave size={20} color="#a36418" />

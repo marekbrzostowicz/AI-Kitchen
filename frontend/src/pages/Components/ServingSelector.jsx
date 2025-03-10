@@ -10,7 +10,6 @@ function ServingSelector({ servings, setServings }) {
 
   return (
     <div className="relative">
-      {/* Przycisk otwierający menu */}
       <div
         className="border-[3px] border-gray-400 rounded-xl p-2 hover:bg-slate-700 cursor-pointer flex items-center gap-2"
         onClick={toggleSelector}
@@ -23,7 +22,6 @@ function ServingSelector({ servings, setServings }) {
         )}
       </div>
 
-      {/* Menu wyboru porcji */}
       {isSelectorOpen && (
         <div className="absolute z-10 mt-2 bg-gray-800 text-white border-[3px] border-gray-400 rounded-lg p-4 shadow-lg">
           <p className="mb-2 font-medium">Select number of servings:</p>
@@ -32,7 +30,7 @@ function ServingSelector({ servings, setServings }) {
             value={servings}
             onChange={(e) => {
               setServings(parseInt(e.target.value));
-              setIsSelectorOpen(false); // Zamknij menu po wyborze
+              setIsSelectorOpen(false);
             }}
           >
             {Array.from({ length: 10 }, (_, i) => (

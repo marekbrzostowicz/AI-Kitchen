@@ -1,9 +1,10 @@
 export const recipeApi = {
-  // Generowanie opisu składnika
   generateIngredientDescription: async (param) => {
     try {
       const response = await fetch(
-        `http://localhost:8000/ingredient?param=${encodeURIComponent(param)}`,
+        `${
+          import.meta.env.VITE_API_URL
+        }/api/ingredient?param=${encodeURIComponent(param)}`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -24,14 +25,16 @@ export const recipeApi = {
     }
   },
 
-  // Zapis przepisu
   saveRecipe: async (recipeData) => {
     try {
-      const response = await fetch("http://localhost:8000/api/save-recipe", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(recipeData),
-      });
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/save-recipe`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(recipeData),
+        }
+      );
       if (!response.ok) throw new Error("Recipe save failed");
       return await response.json();
     } catch (error) {
@@ -39,14 +42,16 @@ export const recipeApi = {
     }
   },
 
-  // Zapis obrazka
   storeImage: async (imageUrl) => {
     try {
-      const response = await fetch("http://localhost:8000/api/store-image", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ imageUrl }),
-      });
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/store-image`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ imageUrl }),
+        }
+      );
       const data = await response.json();
       if (!response.ok || !data.success) {
         throw new Error(data.error || "Image storage failed");

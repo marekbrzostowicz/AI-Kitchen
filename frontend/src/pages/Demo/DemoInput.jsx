@@ -9,7 +9,6 @@ const DemoInputs = () => {
         recipe.
       </p>
 
-      {/* Statyczne inputy */}
       <div className="flex gap-8">
         <div className="flex flex-col gap-2">
           <Input value="Salmon Fillet" placeholder="Ingredient 1" disabled />
@@ -28,14 +27,12 @@ const DemoInputs = () => {
         </div>
       </div>
 
-      {/* Statyczne kontrolki */}
       <div className="flex gap-4 items-center">
         <DemoParameters label="Recipe Language" flagCode="gb" showFlag={true} />
         <DemoParameters label="Cuisine" flagCode="jp" showFlag={true} />
         <DemoParameters label="Display Calories" showFlag={false} />
       </div>
 
-      {/* Przycisk "Generate" */}
       <button className="bg-green-500 text-white px-6 py-2 rounded-lg font-semibold">
         START
       </button>

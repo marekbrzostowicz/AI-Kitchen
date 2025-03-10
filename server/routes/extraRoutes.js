@@ -6,10 +6,7 @@ const fetch = require("node-fetch");
 const path = require("path");
 const fs = require("fs");
 
-// Upewnij się, że masz poprawny import limitów.
-// Jeśli destrukturyzujesz (checkDailyLimit, logUserOperation), używaj tak samo w kodzie.
-// Jeśli używasz obiektu `limits`, dostosuj kod.
-const limits = require("../limits"); // lub { checkDailyLimit, logUserOperation } = require("../limits");
+const limits = require("../limits");
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -129,7 +126,6 @@ router.post("/ingredient", async (req, res) => {
   console.log("Otrzymano parametr:", param);
 
   try {
-    // Przykład użycia limitu
     const canGenerate = await limits.checkDailyLimit(
       userId,
       "ingredient_info",
@@ -144,8 +140,8 @@ router.post("/ingredient", async (req, res) => {
       messages: [
         {
           role: "user",
-          content: `Podaj krótką i przydatną informację o składniku: "${param}" w języku, w jakim jest napisany składnik.  
-- Nie podawaj koloru składnika...`,
+          content: `Podaj krótką i przydatną informację o składniku: "${param}" w języku, w jakim jest napisany składnik. Napisz 3 zdania z ciekawymi informacjami o składniku.  
+- Nie podawaj koloru składnika... odpowiedz w formacie SKŁADNIK(emotka) - OPIS`,
         },
       ],
       temperature: 0,

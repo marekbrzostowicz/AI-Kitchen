@@ -12,7 +12,6 @@ import TimerToast from "./Components/TimerToast.jsx";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-// Funkcja pomocnicza do dzielenia na kolumny (po 5 składników)
 const chunkArray = (array, chunkSize) => {
   const result = [];
   for (let i = 0; i < array.length; i += chunkSize) {
@@ -33,17 +32,14 @@ const Welcome = () => {
   const [lastScrollY, setLastScrollY] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
 
-  // Stan na odpowiedź (przepis) od ChatGPT
   const [recipe, setRecipe] = useState("");
 
-  // Stan na zapisane składniki
   const [savedIngredients, setSavedIngredients] = useState([]);
 
   const navigate = useNavigate();
   const inputRefs = useRef([]);
   const recipeRef = useRef(null);
 
-  // Funkcja pomocnicza: scroll
   const handleScroll = () => {
     if (window.scrollY > lastScrollY) {
       setIsVisible(false);
@@ -53,13 +49,11 @@ const Welcome = () => {
     setLastScrollY(window.scrollY);
   };
 
-  // Obsługa zmiany tekstu w inputach
   const handleChange = (index, value) => {
     const newIngredients = [...ingredients];
     newIngredients[index] = value;
     setIngredients(newIngredients);
 
-    // Limit 15 składników
     if (value.length >= 2 && ingredients.length < 20) {
       if (index === ingredients.length - 1) {
         setIngredients([...newIngredients, ""]);
@@ -72,43 +66,42 @@ const Welcome = () => {
     const tomorrow = new Date();
     tomorrow.setDate(now.getDate() + 1);
     tomorrow.setHours(0, 0, 0, 0);
-    return tomorrow - now; // w milisekundach
+    return tomorrow - now;
   }
 
   const timeUntilReset = getTimeUntilReset();
 
-  // Generowanie przepisu
   const handleGenerate = async () => {
     try {
       setIsLoading(true);
       console.log("Skladniki:", ingredients);
       setSavedIngredients(ingredients.filter((item) => item.trim() !== ""));
 
-      const response = await fetch("http://localhost:8000/recipes/generate", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          ingredients,
-          language,
-          cuisine,
-          calories,
-          userId: localStorage.getItem("userId"),
-        }),
-      });
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/recipes/generate`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            ingredients,
+            language,
+            cuisine,
+            calories,
+            userId: localStorage.getItem("userId"),
+          }),
+        }
+      );
 
       const data = await response.json();
 
-      // Jeśli serwer zwrócił błąd, to przechwytujemy go tutaj
       if (!response.ok) {
         throw new Error(data.error || "Server error");
       }
 
-      // Zapisz odpowiedź
       setRecipe(data.recipe);
       setIngredients([""]);
       setIsLoading(false);
 
-      // Przewiń do przepisu
       setTimeout(() => {
         recipeRef.current?.scrollIntoView({ behavior: "smooth" });
       }, 100);
@@ -155,27 +148,21 @@ const Welcome = () => {
   const chunkedIngredients = chunkArray(ingredients, 5);
 
   const handleLogout = () => {
-    // Usuń dane użytkownika
     localStorage.removeItem("username");
     localStorage.removeItem("userId");
-    // Możesz usunąć też inne klucze, np. token, jeżeli je przechowujesz
-    // localStorage.removeItem("authToken");
 
-    // Przekieruj do strony logowania
     navigate("/");
   };
 
   return (
     <>
       <div className="h-screen flex">
-        {/* Navbar */}
         <nav
           className={`bg-gray-600 bg-opacity-70 fixed top-0 left-0 w-full font-mono text-xl z-10 text-green-200 font-bold pt-2 transition-transform duration-300 ${
             isVisible ? "translate-y-0" : "-translate-y-full"
           }`}
         >
           <div className="container mx-auto flex justify-between items-center pr-16 pl-16">
-            {/* Logo */}
             <img
               src={logo}
               alt="Logo"
@@ -196,7 +183,6 @@ const Welcome = () => {
                 />
               </div>
 
-              {/* YOUR RECIPES */}
               <div
                 onClick={() => navigate("/recipes")}
                 className="relative group py-2 inline-block cursor-pointer
@@ -211,7 +197,6 @@ const Welcome = () => {
                 />
               </div>
 
-              {/* LOGOUT */}
               <div
                 onClick={handleLogout}
                 className="relative group py-2 inline-block cursor-pointer 
@@ -226,20 +211,16 @@ const Welcome = () => {
                 />
               </div>
             </div>
-            {/* GENERATE */}
           </div>
         </nav>
 
-        {/* Main Content */}
         <div className="flex h-full w-full">
-          {/* Left Side: Inputs */}
           <div className="flex-1 bg-gray-800 text-white flex flex-col items-center justify-center p-8 gap-4">
             <p className="text-xl text-green-200 text-[25px] font-semibold mt-4 animated-text ">
               Enter your available ingredients (max 20) and let AI generate the
               recipe.
             </p>
 
-            {/* Kontener na kolumny */}
             <div className="flex gap-8 w-full max-w-3xl justify-center">
               {chunkedIngredients.map((col, colIndex) => (
                 <div key={colIndex} className="flex flex-col gap-2">
@@ -253,6 +234,7 @@ const Welcome = () => {
                         onChange={(e) =>
                           handleChange(globalIndex, e.target.value)
                         }
+                        maxLength={25}
                         ref={(el) => {
                           inputRefs.current[globalIndex] = el;
                         }}
@@ -262,8 +244,6 @@ const Welcome = () => {
                 </div>
               ))}
             </div>
-
-            {/* Przycisk "Generate" */}
             {ingredients.length >= 4 && <Generate onClick={handleGenerate} />}
 
             <div className="absolute bottom-4 left-4 flex flex-col sm:flex-row sm:gap-4 gap-2 items-center">
@@ -273,7 +253,6 @@ const Welcome = () => {
             </div>
           </div>
 
-          {/* Right Side: Image */}
           <div className="relative flex-1">
             <img
               src={burger}
@@ -289,17 +268,12 @@ const Welcome = () => {
           </div>
         </div>
       </div>
-
-      {/* Kontener na odpowiedzi */}
       <Recipe
         recipe={recipe}
         recipeRef={recipeRef}
         isLoading={isLoading}
         calories={calories}
       />
-
-      {console.log("RECIPE", recipe)}
-      {console.log("RECIPE REF", recipeRef)}
     </>
   );
 };
