@@ -2,13 +2,12 @@ import { useEffect, useState } from "react";
 import Lottie from "lottie-react";
 import cookingAnimation from "../../assets/Animation.json";
 import RecipeCard from "./RecipeCard.jsx";
-import { toast, ToastContainer } from "react-toastify";
+import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import PropTypes from "prop-types";
 import { generateRecipeImage } from "../../Api/recipe/imageApi.js";
 import { parseRecipe } from "../../hooks/useRecipeParser.js";
 import { useRecipeData } from "../../hooks/useRecipeData.js";
-// import TimerToast from "../Components/TimerToast.jsx";
 
 const Recipe = ({ recipe, recipeRef, isLoading }) => {
   const [parsedRecipe, setParsedRecipe] = useState(null);
@@ -75,7 +74,7 @@ const Recipe = ({ recipe, recipeRef, isLoading }) => {
         className="bg-gray-700 p-8 text-white flex items-center justify-center"
       >
         <div className="p-4 bg-yellow-100 text-black rounded-xl border-4 border-yellow-500 font-semibold max-w-3xl">
-          <p>Sorry, you can't cook anything with these ingredients.</p>
+          <p>Sorry, you can &apos t cook anything with these ingredients.</p>
         </div>
       </div>
     );
@@ -92,7 +91,7 @@ const Recipe = ({ recipe, recipeRef, isLoading }) => {
         className="bg-gray-700 p-8 text-white flex items-center justify-center"
       >
         <div className="p-4 bg-yellow-100 text-black rounded-xl border-4 border-yellow-500 font-semibold max-w-3xl">
-          <p>Sorry, you can't cook anything with these ingredients.</p>
+          <p>Sorry, you can &apos t cook anything with these ingredients.</p>
           {nonFoodItems.length > 0 && (
             <div className="mt-4">
               <p className="font-bold text-red-600">Non-food items detected:</p>
@@ -110,23 +109,13 @@ const Recipe = ({ recipe, recipeRef, isLoading }) => {
     );
   }
 
-  // function getTimeUntilReset() {
-  //   const now = new Date();
-  //   const tomorrow = new Date();
-  //   tomorrow.setDate(now.getDate() + 1);
-  //   tomorrow.setHours(0, 0, 0, 0);
-  //   return tomorrow - now;
-  // }
-
-  // const timeUntilReset = getTimeUntilReset();
-
   const { title1, title2, content1, content2, cuisine1Code, cuisine2Code } =
     parsedRecipe;
 
   const handleGenerateImage = async (whichRecipe) => {
     const recipeTitle = whichRecipe === 1 ? title1 : title2;
     const userId = localStorage.getItem("userId");
-    return generateRecipeImage(recipeTitle, userId); 
+    return generateRecipeImage(recipeTitle, userId);
   };
 
   return (
@@ -140,7 +129,7 @@ const Recipe = ({ recipe, recipeRef, isLoading }) => {
         ingredientsPortions={arrayOfPortions1}
         instructions={content1}
         cuisineFlag={cuisine1Code}
-        onGenerateImage={() => handleGenerateImage(1)} 
+        onGenerateImage={() => handleGenerateImage(1)}
         totalCalories={totalCaloriesSum1 > 0 ? totalCaloriesSum1 : null}
         onSave={() => {
           setModalOpen1(true);
@@ -167,7 +156,7 @@ const Recipe = ({ recipe, recipeRef, isLoading }) => {
         ingredientsPortions={arrayOfPortions2}
         instructions={content2}
         cuisineFlag={cuisine2Code}
-        onGenerateImage={() => handleGenerateImage(2)} 
+        onGenerateImage={() => handleGenerateImage(2)}
         totalCalories={totalCaloriesSum2 > 0 ? totalCaloriesSum2 : null}
         onSave={() => {
           setModalOpen2(true);

@@ -32,7 +32,7 @@ const Home = () => {
     const element = document.getElementById(id);
     if (element) {
       window.scrollTo({
-        top: element.offsetTop - 80, 
+        top: element.offsetTop - 80,
         behavior: "smooth",
       });
     }
@@ -103,7 +103,6 @@ const Home = () => {
       </div>
 
       <div className="flex p-20 gap-20" id="about">
-
         <p className="text-white p-5 text-justify border-2 border-green-200 rounded-lg text-xl">
           AI Kitchen Helper is your smart cooking assistant designed to make
           meal planning easy and fun. Simply tell the app what ingredients you
@@ -128,11 +127,11 @@ const Home = () => {
         <div className="flex justify-evenly mt-8 mb-16">
           <Flag code="pl" alt="Poland" className="w-12 h-auto rounded-lg" />
           <Flag code="it" alt="Italy" className="w-12 h-auto rounded-lg" />
-          <Flag code="jp" alt="Polska" className="w-12 h-auto rounded-lg" />
-          <Flag code="cn" alt="Polska" className="w-12 h-auto rounded-lg" />
-          <Flag code="mx" alt="Polska" className="w-12 h-auto rounded-lg" />
-          <Flag code="in" alt="Polska" className="w-12 h-auto rounded-lg" />
-          <Flag code="fr" alt="Polska" className="w-12 h-auto rounded-lg" />
+          <Flag code="jp" alt="Japan" className="w-12 h-auto rounded-lg" />
+          <Flag code="cn" alt="China" className="w-12 h-auto rounded-lg" />
+          <Flag code="mx" alt="Mexico" className="w-12 h-auto rounded-lg" />
+          <Flag code="in" alt="India" className="w-12 h-auto rounded-lg" />
+          <Flag code="fr" alt="France" className="w-12 h-auto rounded-lg" />
         </div>
       </div>
       <div
@@ -210,9 +209,7 @@ const Home = () => {
       </div>
 
       <footer className="text-white text-center bg-gray-600 opacity-70 p-6 text-xs">
-        <p>
-          &copy; {new Date().getFullYear()} Marek Brzostowicz. 
-        </p>
+        <p>&copy; {new Date().getFullYear()} Marek Brzostowicz.</p>
         <div className="flex justify-center items-center gap-4 mt-2">
           {/* Ikonki technologii */}
           <FaReact className="text-blue-400 text-sm" title="React" size={30} />

@@ -3,16 +3,16 @@ import Flag from "react-world-flags";
 import PropTypes from "prop-types";
 
 const Language = ({ language, setLanguage }) => {
-  const [isDiv, setDiv] = useState(false); // Stan rozwinięcia dropdowna
-  const dropdownRef = useRef(null); // Referencja do dropdowna
+  const [isDiv, setDiv] = useState(false); 
+  const dropdownRef = useRef(null); 
 
-  // Obsługa kliknięcia w opcję języka
+ 
   const handleLanguageChange = (code) => {
-    setLanguage(code); // Ustawienie nowej flagi w `Welcome.jsx`
-    setDiv(false); // Zamknięcie dropdowna
+    setLanguage(code); 
+    setDiv(false);
   };
 
-  // Zamknięcie dropdowna po kliknięciu poza nim
+ 
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {

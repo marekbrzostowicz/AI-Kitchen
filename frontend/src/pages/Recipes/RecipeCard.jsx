@@ -1,7 +1,13 @@
 import { useEffect, useRef, useState } from "react";
 import Flag from "react-world-flags";
 import ImageLoading from "../Loading/imageLoading.jsx";
-import { FaImage, FaSave, FaCheckCircle, FaStar } from "react-icons/fa";
+import {
+  FaImage,
+  FaSave,
+  FaCheckCircle,
+  FaStar,
+  FaTrash,
+} from "react-icons/fa";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import LoadingDot from "../Loading/LoadingDot.jsx";
@@ -9,6 +15,7 @@ import ServingsSelector from "../Components/ServingSelector.jsx";
 import InfoIcon from "../Components/InfoIcon.jsx";
 import { recipeApi } from "../../Api/recipe/recipeApi.js";
 import TimerToast from "../Components/TimerToast.jsx";
+import PropTypes from "prop-types";
 
 const API_URL = `${import.meta.env.VITE_API_URL}/api`;
 
@@ -25,7 +32,6 @@ const RecipeCard = ({
   onSave,
   modalOpen,
   setModalOpen,
-  onSaveFav,
   modalOpenFav,
   setModalOpenFav,
   showInfoIcon,
@@ -45,7 +51,7 @@ const RecipeCard = ({
   const [descriptionLoading, setDescriptionLoading] = useState(false);
   const [servings, setServings] = useState(1);
   const [scaledPortions, setScaledPortions] = useState([]);
-  const [isSave, setIsSave] = useState(false);
+  const [setIsSave] = useState(false);
   const [imageUrl, setImageUrl] = useState(null);
   const [isImageLoading, setIsImageLoading] = useState(false);
 
@@ -153,7 +159,6 @@ const RecipeCard = ({
 
       await recipeApi.saveRecipe(recipeData);
       toast.success("Recipe Saved");
-      toast.error("Save failed");
     } catch (error) {
       console.error(error);
     }
@@ -197,7 +202,7 @@ const RecipeCard = ({
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [modalOpen]);
+  }, [modalOpen, setModalOpen]);
 
   useEffect(() => {
     function handleClickOutsideFav(event) {
@@ -217,7 +222,7 @@ const RecipeCard = ({
     return () => {
       document.removeEventListener("mousedown", handleClickOutsideFav);
     };
-  }, [modalOpenFav]);
+  }, [modalOpenFav, setModalOpenFav]);
 
   const [hoveredStars, setHoveredStars] = useState(0);
   const [selectedStars, setSelectedStars] = useState(0);
@@ -370,7 +375,16 @@ const RecipeCard = ({
                     <img
                       src={imageUrl}
                       alt="Generated Recipe"
-                      className="w-full h-full rounded-xl hover:cursor-pointer transition-opacity duration-300"
+                      className="w-full h-full rounded-xl hover:cursor-pointer transition-opacity duration-300 group-hover:opacity-70"
+                    />
+                    <FaTrash
+                      size={30}
+                      className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-red-600 opacity-0 group-hover:opacity-100 hover:cursor-pointer transition-opacity duration-300"
+                      onClick={() => {
+                        setImageUrl(null);
+                        setShowGenerateImageButton(true);
+                        setShowImage(false);
+                      }}
                     />
                   </div>
                 ) : (
@@ -469,6 +483,30 @@ const RecipeCard = ({
       </div>
     </>
   );
+};
+
+RecipeCard.propTypes = {
+  title: PropTypes.string.isRequired,
+  ingredients: PropTypes.arrayOf(PropTypes.string).isRequired,
+  ingredientsPortions: PropTypes.arrayOf(
+    PropTypes.shape({
+      name: PropTypes.string,
+      portion: PropTypes.string,
+    })
+  ),
+  instructions: PropTypes.string.isRequired,
+  modalOpen: PropTypes.bool.isRequired,
+  cuisineFlag: PropTypes.string,
+  onGenerateImage: PropTypes.func.isRequired,
+  totalCalories: PropTypes.number,
+  setRecipeTitle: PropTypes.func.isRequired,
+  recipeTitle: PropTypes.string,
+  onSave: PropTypes.func.isRequired,
+  setModalOpen: PropTypes.func.isRequired,
+  onSaveFav: PropTypes.func.isRequired,
+  modalOpenFav: PropTypes.bool.isRequired,
+  setModalOpenFav: PropTypes.func.isRequired,
+  showInfoIcon: PropTypes.func.isRequired,
 };
 
 export default RecipeCard;

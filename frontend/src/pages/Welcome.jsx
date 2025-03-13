@@ -9,7 +9,7 @@ import Language from "./Parameters/Language.jsx";
 import Cuisine from "./Parameters/Cuisine.jsx";
 import Calories from "./Parameters/Calories.jsx";
 import TimerToast from "./Components/TimerToast.jsx";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 const chunkArray = (array, chunkSize) => {
@@ -34,7 +34,7 @@ const Welcome = () => {
 
   const [recipe, setRecipe] = useState("");
 
-  const [savedIngredients, setSavedIngredients] = useState([]);
+  const [setSavedIngredients] = useState([]);
 
   const navigate = useNavigate();
   const inputRefs = useRef([]);
