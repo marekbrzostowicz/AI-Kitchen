@@ -1,12 +1,13 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import backgroundImage from "../assets/mae-mu-PTdm4YUtloY-unsplash.jpg";
-import logo from "../assets/logo.png";
+;
 import Flag from "react-world-flags";
 import Slider from "./Demo/Slider";
 import { FaArrowAltCircleRight } from "react-icons/fa";
 import { FaReact } from "react-icons/fa";
 import { SiMysql, SiExpress, SiTailwindcss } from "react-icons/si";
+import Navbar from "./Components/Navbar";
 
 const Home = () => {
   const [isVisible, setIsVisible] = useState(true);
@@ -40,55 +41,25 @@ const Home = () => {
 
   return (
     <div className="relative">
-      <nav
-        className={`bg-gray-600 bg-opacity-70 fixed top-0 left-0 w-full font-mono text-xl z-[100] text-green-200 font-bold pt-2 transition-transform duration-300 ${
-          isVisible ? "translate-y-0" : "-translate-y-full"
-        }`}
-      >
-        <div className="container mx-auto flex flex-col md:flex-row justify-between items-center px-4 md:px-16">
-          <img
-            src={logo}
-            alt="Logo"
-            onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-            className="w-[100px] h-auto cursor-pointer mb-2 md:mb-0"
-          />
-
-          <div className="flex flex-col md:flex-row items-center gap-4 md:gap-x-48">
-            <div
-              onClick={() => scrollToSection("about")}
-              className="relative group py-2 inline-block cursor-pointer text-green-200 hover:text-green-400 transition-colors duration-300"
-            >
-              ABOUT
-              <span
-                className="absolute left-0 bottom-0 h-[2px] w-full bg-current
-                     scale-x-0 origin-left transition-transform duration-300 group-hover:scale-x-100"
-              ></span>
-            </div>
-            <div
-              onClick={() => scrollToSection("instructions")}
-              className="relative group py-2 inline-block cursor-pointer text-green-200 hover:text-green-400 transition-colors duration-300"
-            >
-              INSTRUCTIONS
-              <span
-                className="absolute left-0 bottom-0 h-[2px] w-full bg-current
-                     scale-x-0 origin-left transition-transform duration-300 group-hover:scale-x-100"
-              ></span>
-            </div>
-
-            <Link
-              to="/login"
-              className="relative group py-2 inline-block cursor-pointer text-green-200 hover:text-green-400 transition-colors duration-300"
-            >
-              LOGIN
-              <span
-                className="absolute left-0 bottom-0 h-[2px] w-full bg-current
-                     scale-x-0 origin-left transition-transform duration-300 group-hover:scale-x-100"
-              ></span>
-            </Link>
-          </div>
-        </div>
-      </nav>
-
+      <Navbar
+        theme="green"
+        links={[
+          { text: "ABOUT", onClick: () => scrollToSection("about") },
+          {
+            text: "INSTRUCTIONS",
+            onClick: () => scrollToSection("instructions"),
+          },
+          { text: "LOGIN", to: "/login" },
+        ]}
+        containerDisplay="flex flex-col md:flex-row justify-between"
+        containerPadding="px-4 md:px-16"
+        gapBetweenLinks="flex-col md:flex-row items-center gap-4 md:gap-x-48"
+        onLinkClick={(linkText) => {
+          if (linkText === "logo") {
+            window.scrollTo({ top: 0, behavior: "smooth" });
+          }
+        }}
+      />
       <div
         className="w-full h-screen bg-cover bg-center"
         style={{
@@ -101,7 +72,6 @@ const Home = () => {
           </h3>
         </div>
       </div>
-
       <div className="flex p-20 gap-20" id="about">
         <p className="text-white p-5 text-justify border-2 border-green-200 rounded-lg text-xl">
           AI Kitchen Helper is your smart cooking assistant designed to make
@@ -195,9 +165,7 @@ const Home = () => {
         </div>
       </div>
       <hr className="ml-48 mr-48 mt-32 mb-8  border-t-2 border-yellow-300"></hr>
-
       <Slider />
-
       <div className="flex justify-center">
         <Link
           to="/register"
@@ -207,7 +175,6 @@ const Home = () => {
           GET STARTED
         </Link>
       </div>
-
       <footer className="text-white text-center bg-gray-600 opacity-70 p-6 text-xs">
         <p>&copy; {new Date().getFullYear()} Marek Brzostowicz.</p>
         <div className="flex justify-center items-center gap-4 mt-2">

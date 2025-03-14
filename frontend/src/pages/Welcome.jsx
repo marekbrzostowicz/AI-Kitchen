@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import logo from "../assets/logo.png";
+
 import burger from "../assets/burger.jpg";
 import Input from "./Components/Input.jsx";
 import Generate from "./Components/StartButton.jsx";
@@ -11,6 +11,7 @@ import Calories from "./Parameters/Calories.jsx";
 import TimerToast from "./Components/TimerToast.jsx";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import Navbar from "./Components/Navbar.jsx";
 
 const chunkArray = (array, chunkSize) => {
   const result = [];
@@ -157,62 +158,18 @@ const Welcome = () => {
   return (
     <>
       <div className="h-screen flex">
-        <nav
-          className={`bg-gray-600 bg-opacity-70 fixed top-0 left-0 w-full font-mono text-xl z-10 text-green-200 font-bold pt-2 transition-transform duration-300 ${
-            isVisible ? "translate-y-0" : "-translate-y-full"
-          }`}
-        >
-          <div className="container mx-auto flex justify-between items-center pr-16 pl-16">
-            <img
-              src={logo}
-              alt="Logo"
-              style={{ width: "100px", height: "auto" }}
-            />
-            <div className="flex gap-48">
-              <div
-                className="relative group py-2 inline-block cursor-pointer 
-                 hover:text-green-400 transition-colors duration-300"
-                onClick={() => console.log("GENERATE clicked")}
-              >
-                GENERATE
-                <span
-                  className="absolute left-0 bottom-0 h-[2px] w-full bg-current
-                   scale-x-0 origin-left
-                   transition-transform duration-300
-                   group-hover:scale-x-100"
-                />
-              </div>
-
-              <div
-                onClick={() => navigate("/recipes")}
-                className="relative group py-2 inline-block cursor-pointer
-                 hover:text-green-400 transition-colors duration-300"
-              >
-                YOUR RECIPES
-                <span
-                  className="absolute left-0 bottom-0 h-[2px] w-full bg-current
-                   scale-x-0 origin-left
-                   transition-transform duration-300
-                   group-hover:scale-x-100"
-                />
-              </div>
-
-              <div
-                onClick={handleLogout}
-                className="relative group py-2 inline-block cursor-pointer 
-                 hover:text-green-400 transition-colors duration-300"
-              >
-                LOGOUT
-                <span
-                  className="absolute left-0 bottom-0 h-[2px] w-full bg-current
-                   scale-x-0 origin-left
-                   transition-transform duration-300
-                   group-hover:scale-x-100"
-                />
-              </div>
-            </div>
-          </div>
-        </nav>
+        <Navbar
+          theme="green"
+          links={[
+            {
+              text: "GENERATE",
+              onClick: () => console.log("GENERATE clicked"),
+            },
+            { text: "YOUR RECIPES", onClick: () => navigate("/recipes") },
+            { text: "LOGOUT", onClick: handleLogout },
+          ]}
+          isVisible={isVisible}
+        />
 
         <div className="flex h-full w-full">
           <div className="flex-1 bg-gray-800 text-white flex flex-col items-center justify-center p-8 gap-4">

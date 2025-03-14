@@ -1,10 +1,10 @@
 import { useState, useEffect, useRef } from "react";
 import Flag from "react-world-flags";
-import { Link } from "react-router-dom";
-import logo from "../../assets/logo.png";
+
 import { FaSortAlphaDown, FaStar, FaTrash } from "react-icons/fa";
 import { deleteRecipe } from "../../Api/recipe/deleteRecipe";
 import Input from "../Components/Input";
+import Navbar from "../Components/Navbar";
 
 function escapeRegExp(string) {
   return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
@@ -169,63 +169,21 @@ const RecipeList = () => {
 
   return (
     <>
-      <nav
-        className={`bg-gray-700 bg-opacity-70 fixed top-0 left-0 w-full font-mono text-xl z-10 text-yellow-200 font-bold pt-2 transition-transform duration-300 ${
-          isVisible ? "translate-y-0" : "-translate-y-full"
-        }`}
-      >
-        <div className="container mx-auto flex justify-between items-center pr-16 pl-16 py-2">
-          <Link to="/welcome">
-            <img
-              src={logo}
-              alt="Logo"
-              style={{ width: "100px", height: "auto", cursor: "pointer" }}
-            />
-          </Link>
-
-          <div className="flex gap-32">
-            <Link
-              to="/welcome"
-              className="relative group py-2 inline-block cursor-pointer 
-                 hover:text-yellow-500 transition-colors duration-300"
-            >
-              GENERATE
-              <span
-                className="absolute left-0 bottom-0 h-[2px] w-full bg-current
-                   scale-x-0 origin-left transition-transform duration-300 
-                   group-hover:scale-x-100"
-              />
-            </Link>
-
-            <button
-              className="relative group py-2 flex items-center gap-2 cursor-pointer 
-                 hover:text-yellow-500 transition-colors duration-300"
-              onClick={toggleStarredRecipes}
-            >
-              STARRED <FaStar />
-              <span
-                className="absolute left-0 bottom-0 h-[2px] w-full bg-current
-                   scale-x-0 origin-left transition-transform duration-300 
-                   group-hover:scale-x-100"
-              />
-            </button>
-
-            <button
-              className="relative group py-2 flex items-center gap-2 cursor-pointer 
-                 hover:text-yellow-500 transition-colors duration-300"
-              onClick={toggleAllRecipes}
-            >
-              ALL RECIPES <FaSortAlphaDown />
-              <span
-                className="absolute left-0 bottom-0 h-[2px] w-full bg-current
-                   scale-x-0 origin-left transition-transform duration-300 
-                   group-hover:scale-x-100"
-              />
-            </button>
-          </div>
-        </div>
-      </nav>
-
+      <Navbar
+        theme="yellow"
+        links={[
+          { text: "GENERATE", to: "/welcome" },
+          { text: "STARRED", icon: <FaStar />, onClick: toggleStarredRecipes },
+          {
+            text: "ALL RECIPES",
+            icon: <FaSortAlphaDown />,
+            onClick: toggleAllRecipes,
+          },
+        ]}
+        containerPadding="pr-16 pl-16 py-2"
+        gapBetweenLinks="gap-32"
+        isVisible={isVisible}
+      />
       <div
         className={`bg-gray-700 flex flex-col bg-opacity-40 fixed left-0 w-[300px] h-full z-50 p-6 transition-all duration-300 ${
           isVisible ? "top-[124px]" : "top-0"
@@ -257,7 +215,6 @@ const RecipeList = () => {
           }}
         />
       </div>
-
       <div className="pl-[340px] pt-4 pr-4 pb-4">
         {loading && (
           <div className="text-white mt-[500px] mr-[500px]">
@@ -388,7 +345,6 @@ const RecipeList = () => {
           </p>
         </div>
       </div>
-
       {recipeToDelete && (
         <div
           className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-50 z-50"
@@ -418,7 +374,6 @@ const RecipeList = () => {
           </div>
         </div>
       )}
-
       {selectedRecipe && (
         <div
           className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-50 z-50"
