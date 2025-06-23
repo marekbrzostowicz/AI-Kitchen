@@ -7,12 +7,12 @@
  offer information about individual ingredients, and visualize dish appearances through images.
 
 ## Features
-- login and registration
-- receiving recipes based on the ingredients provided
-- displaying detailed information about individual components
-- visualization of dishes through photos
-- saving recipes to the database
-- filtering saved recipes
+- Login and registration
+- Receiving recipes based on the ingredients provided
+- Displaying detailed information about individual components
+- Visualization of dishes through photos
+- Saving recipes to the database
+- Filtering saved recipes
 
 ## Screenshots
 
