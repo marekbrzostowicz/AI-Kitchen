@@ -17,8 +17,11 @@
 ## Screenshots
 
 ![image](https://github.com/user-attachments/assets/0d080610-3bf9-4472-ab40-21ba18163bdc)
-
+___
 ![image](https://github.com/user-attachments/assets/28c9edc0-1e8f-4322-8d44-feba3c2f1cfd)
+___
+![image](https://github.com/user-attachments/assets/55b4e04b-c843-46a2-8b19-47b06b367b07)
+
 
 
 ## Technologies
